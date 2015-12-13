@@ -101,7 +101,7 @@ class TestPusherUtils(unittest.TestCase):
 
 		expected = {
 			"date": "2015-01-01T00:00:00.000Z",
-			"sensorId": "site-with-pod-IT001E00005045",
+			"sensorId": "IT001E00005045",
 			"measurements": [{
 				"values":[1, 6],
 				"source": "reading",
