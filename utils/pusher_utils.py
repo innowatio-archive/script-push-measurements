@@ -14,13 +14,13 @@ def body_formatter(measurements):
 		'realeMeno7': 0.0,
 		'reale': 0.225,
 		'tipologia': 3,
-		'pod': u'IT001E00005045',
+		'pod': 'IT001E00005045',
 		'data': datetime.datetime(2015, 10, 18, 23, 0)
 	}
 
 				OUT
 	{
-	    "sensorId": "IT001E00030554",
+	    "sensorId": "site-with-pod-IT001E00030554",
 	    "date": "2015-10-14T15:08:16.652Z",
 	    "timeStep": 3600000,
 	    "measurements": [
@@ -50,7 +50,7 @@ def body_formatter(measurements):
 	starting_date = measurements[0]["data"]
 
 	res = {
-		"sensorId": measurements[0]["pod"],
+		"sensorId": "site-with-pod-" + measurements[0]["pod"],
 		"date": zuludate(starting_date),
 		"timeStep": 3600000,
 	}

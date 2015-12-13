@@ -14,5 +14,5 @@ ATTENTION: command line `export` doesn't actually work with Python. You need to 
 - MSSQL_PASSWORD: database password;
 - MSSQL_DB: database name;
 - API_URL: AWS api url to post to.
-All required.
 
+All required.
