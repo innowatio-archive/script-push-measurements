@@ -4,6 +4,8 @@ import logging
 import pymssql
 import requests
 import utils.pusher_utils as utils
+import json
+import io
 
 
 MSSQL_SERVER = os.environ["MSSQL_SERVER"]
@@ -12,24 +14,25 @@ MSSQL_USER = os.environ["MSSQL_USER"]
 MSSQL_PASSWORD = os.environ["MSSQL_PASSWORD"]
 API_URL = os.environ["API_URL"]
 LOG_DIR = "logs/"
+JSON_DIR = "jsons/"
 
 
 def get_mssql_connection():
-    return pymssql.connect(
-    	MSSQL_SERVER,
-    	MSSQL_USER,
-    	MSSQL_PASSWORD,
-    	MSSQL_DB)
+	return pymssql.connect(
+		MSSQL_SERVER,
+		MSSQL_USER,
+		MSSQL_PASSWORD,
+		MSSQL_DB)
 
 def get_misure(cursor, pod):
 	str_now = datetime.now().strftime("%Y-%m-%d")
-	query = "SELECT * FROM DatiReali WHERE pod=\'"+ pod +"\' AND data < \'"+ str_now +"\' AND data > \'2015-01-01\' ORDER BY data ASC"
+	query = "SELECT * FROM DatiReali WHERE pod=\'"+ pod +"\' AND data < \'"+ str_now +"\' AND data < \'2015-07-01\' ORDER BY data ASC"
 	cursor.execute(query)
 	return cursor
 
 def get_recent_pods(cursor):
-    cursor.execute("SELECT distinct(pod) as Codice FROM DatiReali where Data > '2014-01-01'")
-    return cursor
+	cursor.execute("SELECT distinct(pod) as Codice FROM DatiReali where Data > '2014-01-01'")
+	return cursor
 
 def setup_logging():
 	if not os.path.exists(LOG_DIR):
@@ -59,18 +62,22 @@ def __main__():
 		if len(misure) > 0:
 			print "-------------------- " + podId
 			data = utils.body_formatter(misure)
+			#with open(JSON_DIR + podId + ".json", "w") as outfile: json.dump(data, outfile)
+
+			with io.open(JSON_DIR + podId + ".json", "w", encoding="utf-8") as f:
+				f.write(unicode(json.dumps(data, ensure_ascii=False)))
 
 			# Push
-			r = requests.post(API_URL, data=data, verify=False)
-			print "{} push result => {}".format(podId, r.status_code)
-			logging.info("{} push result => {}".format(podId, r.status_code))
-			if r.status_code > 300:
-				print "Server message: " + r.text
-				logging.error(r.text)
+			#r = requests.post(API_URL, data=data, verify=False)
+			#print "{} push result => {}".format(podId, r.status_code)
+			#logging.info("{} push result => {}".format(podId, r.status_code))
+			#if r.status_code > 300:
+				#print "Server message: " + r.text
+				#logging.error(r.text)
 		else:
 			print podId + " nothing to push"
 			logging.info(podId + " nothing to push")
 
 
 if __name__ == "__main__":
-    __main__()
+	__main__()
